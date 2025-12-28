@@ -68,10 +68,12 @@ static void sqlite_stmt_prin1(LISP ptr, struct gen_printio *f) {
 }
 
 /* Garbage collection marker - nothing to mark for these types */
-static void sqlite_db_gc_mark(LISP ptr) {
+static LISP sqlite_db_gc_mark(LISP ptr) {
+    return NIL;
 }
 
-static void sqlite_stmt_gc_mark(LISP ptr) {
+static LISP sqlite_stmt_gc_mark(LISP ptr) {
+    return NIL;
 }
 	
 
@@ -373,7 +375,7 @@ static LISP lsqlite3_errmsg(LISP db_obj) {
 void init_sql_sqlite3(void) {
     init_sqlite3_types();
 
-    init_subr_2("sqlite3-open", lsqlite3_open);
+    init_subr_1("sqlite3-open", lsqlite3_open);
     init_subr_1("sqlite3-close", lsqlite3_close);
     init_subr_2("sqlite3-exec", lsqlite3_exec);
     init_subr_2("sqlite3-prepare", lsqlite3_prepare);

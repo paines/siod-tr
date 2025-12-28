@@ -182,7 +182,7 @@ sunos:
 
 linux:
 	$(MAKE) $(LDLP) \
-	PROGS="siod tar.so parser_pratt.so ss.so \
+	PROGS="siod tar.so parser_pratt.so ss.so gd.so \
 	       regex.so acct.so sql_sqlite3.so pthreads.so" \
 	CC="gcc" \
 	LD="gcc" \
@@ -199,11 +199,11 @@ linux:
 # uname = Darwin
 darwin:
 	$(MAKE) $(LDLP) \
-	PROGS="siod tar.dylib parser_pratt.dylib ss.dylib \
-	       regex.dylib acct.dylib sql_sqlite3.dylib pthreads.dylib" \
+	PROGS="siod tar.dylib parser_pratt.dylib ss.dylib gd.dylib \
+	       regex.dylib  sql_sqlite3.dylib pthreads.dylib" \
 	CC="clang" \
 	LD="clang" \
-	CFLAGS="$(GCCW) $(CDEBUG) -fPIC -O2 $(SLD)" \
+	CFLAGS="$(GCCW) $(CDEBUG) -Ddarwin -fPIC -O2 $(SLD)" \
 	LD_EXE_FLAGS="-Xlinker -rpath -Xlinker $(LIBDIR) -Xlinker -rpath -Xlinker $(LIBSIODDIR)" \
 	LD_EXE_LIBS="" \
 	LD_LIB_FLAGS="-dynamiclib" \
@@ -306,6 +306,18 @@ sample: $(SAMPLE_OBJS)
 .o.$(SO):
 	$(LD) -o $@ $(LD_LIB_FLAGS) $< libsiod.$(SO) $(LD_LIB_LIBS)
 
+.SUFFIXES: .o .so .dylib
+
+.o.$(SO):
+	$(LD) -o $@ $(LD_LIB_FLAGS) $< libsiod.$(SO) $(LD_LIB_LIBS)
+
+.o.dylib:
+	$(LD) -o $@ $(LD_LIB_FLAGS) $< libsiod.dylib $(LD_LIB_LIBS)
+
+.o.so:
+	$(LD) -o $@ $(LD_LIB_FLAGS) $< libsiod.so $(LD_LIB_LIBS)
+
+
 
 tar.$(SO): tar.o libsiod.$(SO)
 
@@ -333,6 +345,10 @@ regex.$(SO): regex.o libsiod.$(SO) $(HS_REGEX_OBJS_NEEDED)
 pthreads.$(SO): pthreads.o libsiod.$(SO)
 	$(LD) -o pthreads.$(SO) $(LD_LIB_FLAGS) pthreads.o libsiod.$(SO) \
 	      -lpthread $(LD_LIB_LIBS)
+
+sql_sqlite3.$(SO): sql_sqlite3.o libsiod.$(SO)
+	$(LD) -o sql_sqlite3.$(SO) $(LD_LIB_FLAGS) sql_sqlite3.o libsiod.$(SO) \
+	      -lsqlite3 $(LD_LIB_LIBS)
 
 
 siod.o: siod.c siod.h

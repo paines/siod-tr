@@ -80,7 +80,11 @@ gjc@world.std.com
 #include "siod.h"
 #include "siodp.h"
 
-#ifdef linux
+#ifdef darwin
+#include <unistd.h>
+#endif
+
+#if defined (linux) || (darwin)
 #define sprintf_s snprintf
 #endif
 
@@ -91,7 +95,7 @@ static void init_slib_version(void)
 	NIL);}
 
 char * __stdcall siod_version(void)
-{return("RT-3.7.0 2025-12-28");}
+{return("TR-3.7.0 2025-12-28");}
 
 long nheaps = 2;
 LISP *heaps;
@@ -175,7 +179,7 @@ char *siod_lib = SIOD_LIB_DEFAULT;
 void __stdcall process_cla(int argc,char **argv,int warnflag)
 {int k;
  char *ptr;
- static siod_lib_set = 0;
+ static int siod_lib_set = 0;
  char msgbuff[256];
 #if !defined(vms)
  if (!siod_lib_set)

@@ -20,7 +20,7 @@
 #include <errno.h>
 #include <stdarg.h>
 
-#if defined(unix)
+#if defined(unix) || defined(__APPLE__) || defined(__MACH__)
 #include <unistd.h>
 #include <dirent.h>
 #include <sys/types.h>
@@ -50,7 +50,7 @@
 #include <dl.h>
 #endif
 
-#if defined(__osf__) || defined(sun) || defined(linux) || defined(sgi)
+#if defined(__osf__) || defined(sun) || defined(linux) || defined(sgi) || defined(__APPLE__) || defined(__MACH__) || defined(darwin)
 #include <dlfcn.h>
 #endif
 
@@ -892,7 +892,7 @@ LISP file_times(LISP fname)
 
 #if defined(unix) || defined(WIN32)
 
-#if defined(unix)
+#if defined(unix) || defined(__APPLE__) || defined(__MACH__)
 LISP decode_st_moden(mode_t mode)
 {LISP ret = NIL;
  if (mode & S_ISUID) ret = cons(cintern("SUID"),ret);
@@ -966,7 +966,7 @@ LISP decode_stat(struct stat *s)
 		 "atime",flocons((double)s->st_atime),
 		 "mtime",flocons((double)s->st_mtime),
 		 "ctime",flocons((double)s->st_ctime),
-#if defined(unix)
+#if defined(unix) || defined(__APPLE__) || defined(__MACH__)
 		 "blksize",flocons(s->st_blksize),
 		 "blocks",flocons(s->st_blocks),
 #endif
@@ -1030,7 +1030,7 @@ LISP l_chmod(LISP path,LISP mode)
 #endif
 
 
-#ifdef unix
+#if defined(unix) || defined(__APPLE__) || defined(__MACH__)
 
 LISP lutime(LISP fname,LISP mod,LISP ac)
 {struct utimbuf x;
@@ -1544,6 +1544,10 @@ LISP so_ext(LISP fname)
 #if defined(WIN32)
  ext = ".dll";
 #endif
+#if defined (darwin)
+ ext = ".dylib";
+#endif
+
  lext = strcons(strlen(ext),ext);
  if NULLP(fname)
    return(lext);
@@ -1554,7 +1558,7 @@ LISP load_so(LISP fname,LISP iname)
      /* note: error cases can leak memory in this procedure. */
 {LISP init_name;
  void (*fcn)(void) = NULL;
-#if defined(__osf__) || defined(sun) || defined(linux) || defined(sgi)
+#if defined(__osf__) || defined(sun) || defined(linux) || defined(sgi) || defined(__APPLE__) || defined(__MACH__) || defined(darwin)
  void *handle;
 #endif
 #if defined(hpux)
@@ -1575,7 +1579,7 @@ LISP load_so(LISP fname,LISP iname)
    {put_st("so-loading ");
     put_st(get_c_string(fname));
     put_st("\n");}
-#if defined(__osf__) || defined(sun) || defined(linux) || defined(sgi)
+#if defined(__osf__) || defined(sun) || defined(linux) || defined(sgi) || defined(__APPLE__) || defined(__MACH__) || defined(darwin)
 #if !defined(__osf__)
  /* Observed bug: values of LD_LIBRARY_PATH established with putenv
     -after- a process has started are ignored. Work around follows. */
@@ -1587,7 +1591,20 @@ LISP load_so(LISP fname,LISP iname)
 #endif
  if (!(handle = dlopen(get_c_string(fname),RTLD_LAZY)))
    err(dlerror(),fname);
- if (!(fcn = dlsym(handle,get_c_string(init_name))))
+ /* On macOS, C symbols are prefixed with underscore, try that first */
+#if defined(__APPLE__) || defined(__MACH__) || defined(darwin)
+ {
+   char *symbol_name = get_c_string(init_name);
+   char prefixed_name[256];
+   snprintf(prefixed_name, sizeof(prefixed_name), "_%s", symbol_name);
+   fcn = dlsym(handle, prefixed_name);
+   if (!fcn)
+     fcn = dlsym(handle, symbol_name);  /* fallback to non-prefixed */
+ }
+#else
+ fcn = dlsym(handle,get_c_string(init_name));
+#endif
+ if (!fcn)
    err(dlerror(),init_name);
 #endif
 #if defined(hpux)

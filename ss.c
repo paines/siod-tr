@@ -9,10 +9,6 @@
 #include <string.h>
 #include <errno.h>
 #include <ctype.h>
-#ifdef unix
-#include <unistd.h>
-#include <sys/time.h>
-#endif
 #ifdef SUN5
 /* missing from unistd.h */
 long gethostid(void); 
@@ -42,7 +38,9 @@ int gethostname(char *, int);
 #define close socket_close
 #endif
 #endif
-#ifdef unix
+#if defined(unix) || defined(__APPLE__) || defined(__MACH__) || defined(darwin)
+#include <unistd.h>
+#include <sys/time.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -589,10 +587,10 @@ void ss_prin1(LISP s,struct gen_printio *f)
 
 #ifndef WIN32
 
-LISP l_getname(int (*fcn)(int fn, struct sockaddr *,size_t *),char *msg,LISP s)
+LISP l_getname(int (*fcn)(int fn, struct sockaddr *, socklen_t *),char *msg,LISP s)
 {struct sock_stream *ss = get_ss(s,1);
  struct sockaddr_in a;
- size_t len;
+ socklen_t len;
  char buff[512];
  unsigned char *p;
  len = sizeof(a);
