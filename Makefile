@@ -457,7 +457,7 @@ install: $(DISTFILES)
 clean:
 	-rm -f *.o *.so *.sl  *.dylib *~ $(MANPAGES:.man=.txt) so_locations \
             siod sample siod.tar siod.tar.gz siod.zip selfdoc.txt TAGS \
-	    *.db $(CMDFILES)
+	    *.db *.gif  $(CMDFILES)
 
 # make manpage txt files for distribution to people who do not have 
 # nroff.
