@@ -66,7 +66,7 @@
 #include <crypt.h>
 #endif
 
-#if defined(sgi)
+#if defined(sgi) || defined(__APPLE__) || defined(__MACH__) || defined(darwin)
 #include <limits.h>
 #endif
 
@@ -148,7 +148,7 @@ LISP lcrypt(LISP key,LISP salt)
 
 #endif
 
-#if defined(unix) || defined(WIN32)
+#if defined(unix) || defined(WIN32) || defined(__APPLE__) || defined(__MACH__) || defined(darwin)
 
 #if defined(WIN32)
 #define getcwd _getcwd
@@ -726,7 +726,7 @@ LISP current_resource_usage(LISP kind)
 
 #endif
 
-#ifdef unix
+#if defined(unix) || defined(__APPLE__) || defined(__MACH__) || defined(darwin)
 
 LISP l_opendir(LISP name)
 {long iflag;
@@ -890,7 +890,7 @@ LISP file_times(LISP fname)
    return(cons(flocons((double)st.st_ctime),
 	       cons(flocons((double)st.st_mtime),NIL)));}
 
-#if defined(unix) || defined(WIN32)
+#if defined(unix) || defined(WIN32) || defined(__APPLE__) || defined(__MACH__) || defined(darwin)
 
 #if defined(unix) || defined(__APPLE__) || defined(__MACH__)
 LISP decode_st_moden(mode_t mode)
@@ -1019,7 +1019,7 @@ LISP l_fnmatch(LISP pat,LISP str,LISP flgs)
 
 #endif
 
-#if defined(unix) || defined(WIN32)
+#if defined(unix) || defined(WIN32) || defined(__APPLE__) || defined(__MACH__) || defined(darwin)
 
 LISP l_chmod(LISP path,LISP mode)
 {if (chmod(get_c_string(path),get_c_long(mode)))
@@ -1544,10 +1544,6 @@ LISP so_ext(LISP fname)
 #if defined(WIN32)
  ext = ".dll";
 #endif
-#if defined (darwin)
- ext = ".dylib";
-#endif
-
  lext = strcons(strlen(ext),ext);
  if NULLP(fname)
    return(lext);
@@ -1767,7 +1763,7 @@ LISP lgmtime(LISP value)
  else
    return(err("gmtime",llast_c_errmsg(-1)));}
 
-#if defined(unix) || defined(WIN32)
+#if defined(unix) || defined(WIN32) || defined(__APPLE__) || defined(__MACH__) || defined(darwin)
 LISP ltzset(void)
 {tzset();
  return(NIL);}
@@ -2185,7 +2181,7 @@ void __stdcall init_slibu(void)
 #if defined(unix)
  char *tmp1,*tmp2;
 #endif
-#if defined(unix) || defined(WIN32)
+#if defined(unix) || defined(WIN32) || defined(__APPLE__) || defined(__MACH__) || defined(darwin)
  tc_opendir = allocate_user_tc();
  set_gc_hooks(tc_opendir,
 	      NULL,
@@ -2212,7 +2208,7 @@ void __stdcall init_slibu(void)
  init_subr_0("getgid",lgetgid);
  init_subr_0("getuid",lgetuid);
 #endif
-#if defined(unix) || defined(WIN32)
+#if defined(unix) || defined(WIN32) || defined(__APPLE__) || defined(__MACH__) || defined(darwin)
  init_subr_0("getcwd",lgetcwd);
 #endif
 #ifdef unix
@@ -2265,7 +2261,7 @@ void __stdcall init_slibu(void)
 #if defined(__osf__) || defined(SUN5) || defined(linux)
  init_subr_1("current-resource-usage",current_resource_usage);
 #endif
-#if  defined(unix) || defined(WIN32)
+#if  defined(unix) || defined(WIN32) || defined(__APPLE__) || defined(__MACH__) || defined(darwin)
  init_subr_1("opendir",l_opendir);
  init_subr_1("closedir",l_closedir);
  init_subr_1("readdir",l_readdir);
@@ -2283,7 +2279,7 @@ void __stdcall init_slibu(void)
  init_subr_1("readline",readline);
  init_subr_1("html-encode",html_encode);
  init_subr_1("html-decode",html_decode);
-#if defined(unix) || defined(WIN32)
+#if defined(unix) || defined(WIN32) || defined(__APPLE__) || defined(__MACH__) || defined(darwin)
  init_subr_1("decode-file-mode",decode_st_mode);
  init_subr_1("encode-file-mode",encode_st_mode);
  init_subr_1("stat",l_stat);
@@ -2359,7 +2355,7 @@ void __stdcall init_slibu(void)
 #endif
  init_subr_1("localtime",llocaltime);
  init_subr_1("gmtime",lgmtime);
-#if defined(unix) || defined(WIN32)
+#if defined(unix) || defined(WIN32) || defined(__APPLE__) || defined(__MACH__) || defined(darwin)
  init_subr_0("tzset",ltzset);
 #endif
  init_subr_1("mktime",lmktime);

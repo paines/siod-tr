@@ -679,7 +679,7 @@ LISP lgethostname(void)
  else
    return(strcons(strlen(buff),buff));}
 
-#if defined(unix)
+#if defined(unix) || defined(__APPLE__) || defined(__MACH__) || defined(darwin)
 
 LISP lgethostid(void)
 {return(flocons(gethostid()));}
@@ -738,7 +738,7 @@ void init_ss(void)
  init_subr_2("s-read",s_read);
  init_subr_2("s-write",s_write);
  init_subr_2("s-shutdown",s_shutdown);
-#if defined(unix)
+#if defined(unix) || defined(__APPLE__) || defined(__MACH__) || defined(darwin)
  init_subr_0("gethostid",lgethostid);
 #endif
  init_ss_version();}
