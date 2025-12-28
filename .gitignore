@@ -1,0 +1,32 @@
+*.o
+siod
+siod.exe
+siod.tar.gz
+siod.zip
+*.so
+*.dylib
+*.a
+
+claude/
+sionainn/
+tmp/
+temp/
+*.tmp
+
+
+# Editor backups
+*~
+*.swp
+*.swo
+.*.sw?
+\#*\#
+
+# OS cruft
+.DS_Store
+Thumbs.db
+
+# Test outputs
+test-output/
+*.log
+*.db
+*.gif
