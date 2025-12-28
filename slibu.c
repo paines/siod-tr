@@ -1544,6 +1544,9 @@ LISP so_ext(LISP fname)
 #if defined(WIN32)
  ext = ".dll";
 #endif
+#if defined(darwin)
+ ext = ".dylib";
+#endif
  lext = strcons(strlen(ext),ext);
  if NULLP(fname)
    return(lext);

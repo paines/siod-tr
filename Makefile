@@ -455,7 +455,7 @@ install: $(DISTFILES)
 	@echo "Install done."
 
 clean:
-	-rm -f *.o *.so *.sl *~ $(MANPAGES:.man=.txt) so_locations \
+	-rm -f *.o *.so *.sl  *.dylib *~ $(MANPAGES:.man=.txt) so_locations \
             siod sample siod.tar siod.tar.gz siod.zip selfdoc.txt TAGS \
 	    *.db $(CMDFILES)
 

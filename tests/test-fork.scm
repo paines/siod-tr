@@ -2,6 +2,7 @@
 ;; $Id: fork-test.scm,v 1.1 1996/10/17 18:40:18 gjc Exp $
 
 (define (fork-test-1)
+  (puts "=== SQLite3 Binding Test Suite ===\n")
   (let ((pid (fork)))
     (if pid
 	(begin (writes nil
