@@ -1,6 +1,8 @@
 ;;; Ultra-minimal Raylib test for SIOD-TR
 ;;; This uses only the most basic SIOD features
 
+(require-so (so-ext "raylib"))
+
 ;;; Test 1: Simple static puts
 (define (test-static)
   (init-window 400 300 "Static Test")
@@ -65,12 +67,9 @@
 
 (define (help)
   (puts "Minimal Raylib tests:")
-  (newline)
   (puts "  (test-static)  - Static circle and text")
-  (newline)
   (puts "  (test-moving)  - Bouncing circle")
-  (newline)
   (puts "  (test-pixels)  - Colored pixel gradient")
-  (newline))
+)
 
 (help)

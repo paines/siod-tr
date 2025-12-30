@@ -9,7 +9,10 @@
 ;;;
 ;;; Note: These examples use 'while' loops (no 'do' macro needed)
 
+(require-so (so-ext "raylib"))
+
 ;;; Example 1: Basic Hello World - Bouncing Ball
+
 (define (hello-world-1)
   (init-window 800 600 "SIOD-TR: Hello Raylib")
   (set-target-fps 60)
