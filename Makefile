@@ -34,11 +34,22 @@ CP_F=cp -f
 GCCW=-Wall -Wstrict-prototypes
 #
 SAMPLE_OBJS = sample.o slib.o sliba.o trace.o
-SIOD_OBJS_COMMON = slib.o sliba.o trace.o slibu.o md5.o siod_json.o
+SIOD_OBJS_COMMON = slib.o sliba.o trace.o slibu.o md5.o siod_json.o siod_readline.o
 HS_REGEX_OBJS=regcomp.o regerror.o regexec.o regfree.o
 
 JSON_CFLAGS = `pkg-config --cflags libcjson`
 JSON_LDFLAGS = `pkg-config --libs libcjson`
+
+# Readline support (optional but recommended)
+# Check if readline is available
+READLINE_AVAILABLE := $(shell pkg-config --exists readline && echo yes || echo no)
+ifeq ($(READLINE_AVAILABLE),yes)
+    READLINE_CFLAGS = `pkg-config --cflags readline` -DHAVE_READLINE
+    READLINE_LDFLAGS = `pkg-config --libs readline`
+else
+    READLINE_CFLAGS =
+    READLINE_LDFLAGS =
+endif
 #
 #
 default:
@@ -80,11 +91,11 @@ linux:
 	       regex.so acct.so sql_sqlite3.so pthreads.so" \
 	CC="gcc" \
 	LD="gcc" \
-	CFLAGS="$(GCCW) $(CDEBUG) -fPIC -O2 -D__USE_MISC -D__USE_GNU -D__USE_SVID -D__USE_XOPEN_EXTENDED -D__USE_XOPEN $(SLD)" \
+	CFLAGS="$(GCCW) $(CDEBUG) -fPIC -O2 -D__USE_MISC -D__USE_GNU -D__USE_SVID -D__USE_XOPEN_EXTENDED -D__USE_XOPEN $(SLD) $(READLINE_CFLAGS)" \
 	LD_EXE_FLAGS="-rdynamic -Xlinker -rpath -Xlinker $(LIBDIR) -Xlinker -rpath -Xlinker $(LIBSIODDIR)" \
 	LD_EXE_LIBS="-ldl" \
 	LD_LIB_FLAGS="-shared" \
-	LD_LIB_LIBS="-lm -lc -ldl -lcrypt -lsqlite3 -lpthread $(JSON_LDFLAGS)" \
+	LD_LIB_LIBS="-lm -lc -ldl -lcrypt -lsqlite3 -lpthread $(JSON_LDFLAGS) $(READLINE_LDFLAGS)" \
 	SO="so" \
         build_driver
 
@@ -181,6 +192,9 @@ sql_sqlite3.$(SO): sql_sqlite3.o libsiod.$(SO)
 
 siod_json.o: siod_json.c siod_json.h siod.h
 	 $(CC) $(CFLAGS) $(JSON_CFLAGS) -c siod_json.c
+
+siod_readline.o: siod_readline.c siod_readline.h siod.h
+	 $(CC) $(CFLAGS) $(READLINE_CFLAGS) -c siod_readline.c
 
 siod.o: siod.c siod.h
 

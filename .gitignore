@@ -23,6 +23,7 @@ temp/
 
 # OS cruft
 .DS_Store
+._.DS_Store
 Thumbs.db
 
 # Test outputs
@@ -30,3 +31,4 @@ test-output/
 *.log
 *.db
 *.gif
+

@@ -98,6 +98,7 @@
 #include "siod.h"
 #include "siodp.h"
 #include "siod_json.h"
+#include "siod_readline.h"
 #include "md5.h"
 
 static void init_slibu_version(void)
@@ -1451,7 +1452,7 @@ LISP lgets(LISP file,LISP buffn)
  no_interrupt(iflag);
  return(NIL);}
 
-LISP readline(LISP file)
+LISP siod_readline(LISP file)
 {LISP result;
  char *start,*ptr;
  result = lgets(file,NIL);
@@ -2055,9 +2056,21 @@ int __stdcall siod_main(int argc,char **argv, char **env)
  init_trace();
  init_slibu();
  init_json_module();  /* Initialize JSON module */
+ init_readline();     /* Initialize readline support */
  init_subr_1("__cgi-main",cgi_main);
  if (iargc == 0)
-   retval = repl_driver(1,1,NULL);
+   {/* Interactive REPL - use readline if available */
+    long (*readline_repl_fn)(void) = get_readline_repl();
+    
+    if (readline_repl_fn != NULL)
+      {/* Use standalone readline REPL (avoids signal/I/O conflicts) */
+       retval = (*readline_repl_fn)();}
+    else
+      {/* No readline, use default REPL */
+       retval = repl_driver(1,1,NULL);}
+    
+    /* Save history on exit */
+    save_readline_history();}
  else
    {for(j=1;j<(((mainflag >= 2) && (argc > 3)) ? 3 : argc);++j)
       if (argv[j][0] != '-')
@@ -2281,7 +2294,7 @@ void __stdcall init_slibu(void)
  init_subr_1("url-encode",url_encode);
  init_subr_1("url-decode",url_decode);
  init_subr_2("gets",lgets);
- init_subr_1("readline",readline);
+ init_subr_1("readline",siod_readline);
  init_subr_1("html-encode",html_encode);
  init_subr_1("html-decode",html_decode);
 #if defined(unix) || defined(WIN32) || defined(__APPLE__) || defined(__MACH__) || defined(darwin)

@@ -2417,7 +2417,14 @@ LISP save_forms(LISP fname,LISP forms,LISP how)
  return(sym_t);}
 
 LISP quit(void)
-{return(err(NULL,NIL));}
+{
+//	return(err(NULL,NIL));
+#ifdef HAVE_READLINE
+	save_readline_history();
+#endif
+
+	exit(0);
+}
 
 LISP nullp(LISP x)
 {if EQ(x,NIL) return(sym_t); else return(NIL);}

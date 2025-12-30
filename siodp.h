@@ -21,6 +21,7 @@ extern char *siod_lib;
 extern long nointerrupt;
 extern long interrupt_differed;
 extern long errjmp_ok;
+extern jmp_buf errjmp;  /* Error handler jump buffer */
 extern LISP unbound_marker;
 
 struct user_type_hooks
