@@ -28,9 +28,9 @@
       (set! y (+ y vy))
       
       ;; Bounce off edges
-      (when (or (< x 0) (> x 800))
+      (if (or (< x 0) (> x 800))
         (set! vx (- 0 vx)))
-      (when (or (< y 0) (> y 600))
+      (if (or (< y 0) (> y 600))
         (set! vy (- 0 vy)))
       
       ;; Draw
@@ -53,10 +53,10 @@
     
     (while (not (window-should-close?))
       ;; Input
-      (when (key-down? KEY_RIGHT) (set! x (+ x speed)))
-      (when (key-down? KEY_LEFT)  (set! x (- x speed)))
-      (when (key-down? KEY_DOWN)  (set! y (+ y speed)))
-      (when (key-down? KEY_UP)    (set! y (- y speed)))
+      (if (key-down? KEY_RIGHT) (set! x (+ x speed)))
+      (if (key-down? KEY_LEFT)  (set! x (- x speed)))
+      (if (key-down? KEY_DOWN)  (set! y (+ y speed)))
+      (if (key-down? KEY_UP)    (set! y (- y speed)))
       
       ;; Draw
       (begin-drawing)
@@ -237,19 +237,19 @@
                 (y-range (- y-max y-min)))
             
             ;; Pan
-            (when (key-pressed? KEY_RIGHT)
+            (if (key-pressed? KEY_RIGHT)
               (set! x-min (+ x-min (* x-range pan-factor)))
               (set! x-max (+ x-max (* x-range pan-factor)))
               (set! need-redraw #t))
-            (when (key-pressed? KEY_LEFT)
+            (if (key-pressed? KEY_LEFT)
               (set! x-min (- x-min (* x-range pan-factor)))
               (set! x-max (- x-max (* x-range pan-factor)))
               (set! need-redraw #t))
-            (when (key-pressed? KEY_UP)
+            (if (key-pressed? KEY_UP)
               (set! y-min (- y-min (* y-range pan-factor)))
               (set! y-max (- y-max (* y-range pan-factor)))
               (set! need-redraw #t))
-            (when (key-pressed? KEY_DOWN)
+            (if (key-pressed? KEY_DOWN)
               (set! y-min (+ y-min (* y-range pan-factor)))
               (set! y-max (+ y-max (* y-range pan-factor)))
               (set! need-redraw #t))
