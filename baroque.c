@@ -266,6 +266,84 @@ static LISP ltan_complex(LISP x) {
     return from_complex(result);
 }
 
+static LISP lconj_complex(LISP x) {
+    double complex z = to_complex(x);
+    double complex result = conj(z);
+    return from_complex(result);
+}
+
+static LISP labs_complex(LISP x) {
+    double complex z = to_complex(x);
+    double complex result = cabs(z);
+    return from_complex(result);
+}
+
+/* inverse trig functions */
+
+static LISP lasin_complex(LISP x) {
+    double complex z = to_complex(x);
+    double complex result = casin(z);
+    return from_complex(result);
+}
+
+static LISP lacos_complex(LISP x) {
+    double complex z = to_complex(x);
+    double complex result = cacos(z);
+    return from_complex(result);
+}
+
+static LISP latan_complex(LISP x) {
+    double complex z = to_complex(x);
+    double complex result = catan(z);
+    return from_complex(result);
+}
+
+/* hyperbolic trig functions */
+static LISP lsinh_complex(LISP x) {
+    double complex z = to_complex(x);
+    double complex result = csinh(z);
+    return from_complex(result);
+}
+static LISP lcosh_complex(LISP x) {
+    double complex z = to_complex(x);
+    double complex result = ccosh(z);
+    return from_complex(result);
+}
+
+static LISP ltanh_complex(LISP x) {
+    double complex z = to_complex(x);
+    double complex result = ctanh(z);
+    return from_complex(result);
+}
+
+static LISP lasinh_complex(LISP x) {
+    double complex z = to_complex(x);
+    double complex result = casinh(z);
+    return from_complex(result);
+}
+
+static LISP lacosh_complex(LISP x) {
+    double complex z = to_complex(x);
+    double complex result = cacosh(z);
+    return from_complex(result);
+}
+
+static LISP latanh_complex(LISP x) {
+    double complex z = to_complex(x);
+    double complex result = catanh(z);
+    return from_complex(result);
+}
+
+static LISP lproj_complex(LISP x) {
+    double complex z = to_complex(x);
+    double complex result = cproj(z);
+    return from_complex(result);
+}
+
+
+
+
+
 /* ============================================
    INITIALIZATION
    ============================================ */
@@ -300,4 +378,19 @@ void init_baroque(void) {
     init_subr_1("sin", lsin_complex);
     init_subr_1("cos", lcos_complex);
     init_subr_1("tan", ltan_complex);
+    init_subr_1("asin", lasin_complex);
+    init_subr_1("acos", lacos_complex);
+    init_subr_1("atan", latan_complex);
+
+    init_subr_1("sinh", lsinh_complex);
+    init_subr_1("cosh", lcosh_complex);
+    init_subr_1("tahn", ltanh_complex);
+    init_subr_1("asinh", lasinh_complex);
+    init_subr_1("acosh", lacosh_complex);
+    init_subr_1("atanh", latanh_complex);
+
+
+    init_subr_1("conj", lconj_complex);
+    init_subr_1("proj", lproj_complex);
+
 }
