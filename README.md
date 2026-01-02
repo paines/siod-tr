@@ -12,8 +12,6 @@ Built from the original source at: https://people.delphiforums.com/gjc//siod.htm
 
 Let's be honest: This is about bringing old tech back to life so you can do _bad_ things to it.
 
-You know, **Scáthify** it. 
-
 The goal is a proper mathematical computing environment where you can:
 - Explore baroque number systems (ℂ → ℍ → 𝕆)
 - Run mathematical simulations without low-level nonsense
@@ -24,8 +22,8 @@ The goal is a proper mathematical computing environment where you can:
 ## What's "Scáthify"?
 
 Take perfectly good vintage software and:
-1. Rip out the legacy cruft (bye MySQL, Sybase, Oracle, NDBM)
-2. Modernize what's useful (hello libgd 2.3.3, SQLite3)
+1. Rip out the legacy cruft (bye mSQL, Sybase, Oracle, NDBM)
+2. Modernize what's useful (hello libgd 2.3.3, JSON, SQLite3)
 3. Fix security holes (mkstemp > mktemp)
 4. Actually document things
 5. Add the mathematical tools you actually need
