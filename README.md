@@ -32,58 +32,57 @@ Take perfectly good vintage software and:
 6. Do it with a chaotic goblin energy
 
 ## What's Been Done
+**Cleanup of legacy cruft**:
+	- removed support for ancient databases
+	- cleanup of legacy build targets in makefile
 
-### Modernizations
-- **GD Graphics**: Updated from libgd 1.2 (1996) to 2.3.3 (2025)
-  - Modern font access via `gdFontGet*()` functions
-  - Fixed security vulnerability (mktemp → mkstemp)
-  - Comprehensive documentation and utilities
-  - Test suite with sample outputs
+**Sqlite3 support**:
+	- requires sqlite3 to be installed
+	- replaces the legacy database types
 
-- **SQLite3**: Full database support
-  - Prepared statements with parameter binding
-  - High-level utility library for common operations
-  - Complete API documentation
-  - Working demo and test suite
+**Readline support**:
+	- added GNU readline support for interactive sessions
+	- requires readline to be installed
+	- This _really_ makes development so much more pleasant!
 
-- **JSON**: Added JSON support
+**JSON support**:
+	- added support for reading/writing and interacting with data
+	  in JSON format
+	- built on cJSON
 
-- **Readline**: Added gnu readline support
-  - only triggers when siod is executed from a terminal
+**GD Uplift**:
+	- a minimal uplift of libGD support from v1.x to v2.3.3+
+	- It's not a huge priority for me, but it has been tested and
+          demonstrated to work
 
-- **Removed Legacy Cruft**:
-  - mSQL bindings (obsolete)
-  - Sybase bindings (obsolete)
-  - Oracle bindings (obsolete)
-  - NDBM (replaced by SQLite3)
-  - Deleted ancient build targets
+**Raylib support**:
+	- Initial support for Raylib
+	- check out solar-system.scm in the examples dir
 
+**Complex maths**:
+	- the siod core has been extended to support complex maths
+	- requires C99 standard maths library
+	- the standard maths functions are polymorphic, ie.
+	  (+ 1 (make-rectanguar 3 4)) works happily.
+	- TODO: I'd love more natural representations of complex numbers
+	  i.e. (define a 12.45+4i) returning 12.45+4i	
 
-- **Build System**: Updated to use pkg-config for modern library detection
-
-- **Documentation**: Created `docs/` with proper module references
-
-- **Tests**: Add test suites for new and updated modules
-
-### Security Fixes
-- Replaced unsafe `mktemp()` with `mkstemp()` (eliminated race condition)
-- All compiler warnings addressed
+**PlPlot support**:
+	- Now we can do plots to files! 
+	- requires plplot to be installed
 
 ## What's Next
 
-The roadmap to mathematical chaos:
-
-1. **Interactive Graphics**: SDL2 or RayLib bindings for real-time visualization
-2. **Baroque Number System**: Complex → Quaternion → Octonion progression
-3. **Symbolic Algebra**: SymEngine integration
-4. **Concurrency**: Proper threading/async (the Lisp way)
-5. **Mathematical Simulations**: Gravity systems, attractors, chaos theory
+	- updating of all of the documentation for the sysem
+	- replacing the siod.html with a markdown version
+	- quarternions _useful_, octonions _not useful, but fun_
+	- symbolic maths using symengine
 
 ## Building
 
 ```bash
 # Install dependencies (Ubuntu/Debian)
-sudo apt install libgd-dev libsqlite3-dev
+sudo apt install libgd-dev libsqlite3-dev p
 
 # Build
 make linux
@@ -96,9 +95,7 @@ LD_LIBRARY_PATH=. ./siod -v01,-m2 tests/test-sql-utilities.scm
 
 ## Documentation
 
-See `docs/` directory:
-- `gd.md` - GD graphics library reference
-- `sql_sqlite3.md` - SQLite3 database operations
+See `docs/` directory
 
 Utility libraries:
 - `gd-utilities.scm` - High-level graphics helpers
@@ -110,6 +107,7 @@ Utility libraries:
 siod-tr/
 ├── attic/              # Old README and Makefile have been moved here 
 ├── docs/               # Module documentation
+├── examples/           # Example scheme code for the various extensions
 ├── tests/        	# Test suites
 ├── *-utilities.scm     # High-level helper libraries
 └── Makefile            # Build system (updated)
