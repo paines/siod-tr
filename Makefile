@@ -270,7 +270,7 @@ LIBFILES = http-server.scm http-stress.scm http.scm \
 	   pthreads-utilities.scm help.scm qol.scm
 
 SOLIBFILES=gd tar ss regex acct  parser_pratt \
-           statfs sql_sqlite3 raylib
+           statfs sql_sqlite3 raylib plplot
 
 
 PUBINCS = siod.h
