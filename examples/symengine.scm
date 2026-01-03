@@ -202,3 +202,75 @@
 (define (sym-logistic K r t)
   `(/ ,K (+ 1 (* (- (/ ,K P0) 1) (exp (* -1 ,r ,t))))))
 
+;;; ============================================
+;;; Example Usage Functions
+;;; ============================================
+
+(define (example-basic)
+  (display "=== Basic SymEngine Examples ===")
+  (newline)
+  (newline)
+  
+  (display "1. Create expression:")
+  (newline)
+  (sym-show "  f(x)" '(+ (* x x) (* 2 x) 1))
+  (newline)
+  
+  (display "2. Differentiate:")
+  (newline)
+  (sym-show "  f'(x)" (sym-diff '(+ (* x x) (* 2 x) 1) 'x))
+  (newline)
+  
+  (display "3. Expand:")
+  (newline)
+  (sym-show "  expanded" (sym-expand '(* (+ x 1) (+ x 2))))
+  (newline))
+
+(define (example-calculus)
+  (display "=== Calculus Examples ===")
+  (newline)
+  (newline)
+  
+  (display "Product rule: d/dx[x·sin(x)]")
+  (newline)
+  (sym-show "  " (sym-diff '(* x (sin x)) 'x))
+  (newline)
+  
+  (display "Chain rule: d/dx[sin(x²)]")
+  (newline)
+  (sym-show "  " (sym-diff '(sin (* x x)) 'x))
+  (newline)
+  
+  (display "Quotient rule: d/dx[sin(x)/x]")
+  (newline)
+  (sym-show "  " (sym-diff '(/ (sin x) x) 'x))
+  (newline))
+
+(define (example-trig)
+  (display "=== Trigonometric Examples ===")
+  (newline)
+  (newline)
+  
+  (display "d/dx[sin(x)]:")
+  (newline)
+  (sym-show "  " (sym-diff '(sin x) 'x))
+  (newline)
+  
+  (display "d/dx[cos(x)]:")
+  (newline)
+  (sym-show "  " (sym-diff '(cos x) 'x))
+  (newline)
+  
+  (display "d/dx[tan(x)]:")
+  (newline)
+  (sym-show "  " (sym-diff '(tan x) 'x))
+  (newline))
+
+;;; ============================================
+;;; Utilities Loaded Message
+;;; ============================================
+
+(display "SymEngine utilities loaded.")
+(newline)
+(display "Try: (example-basic), (example-calculus), (example-trig)")
+(newline)
