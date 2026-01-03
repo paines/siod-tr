@@ -7,16 +7,27 @@
 ;;; Display Helpers
 ;;; ============================================
 
-;;; Pretty-print symbolic expression
-(define (sym-display expr)
-  (display (sym->string expr))
-  (newline))
-
 ;;; Display expression with label
+;;; Handles both quoted expressions and string results from symbolic ops
 (define (sym-show label expr)
   (display label)
   (display ": ")
-  (sym-display expr))
+  (if (pair? expr)
+      ;; It's a quoted expression like '(+ x x) - convert it
+      (begin
+        (display (sym expr))
+        (newline))
+      ;; It's already a string result - just display it
+      (begin
+        (display expr)
+        (newline))))
+
+;;; Pretty-print symbolic expression or string result  
+(define (sym-display expr)
+  (if (pair? expr)
+      (display (sym expr))
+      (display expr))
+  (newline))
 
 ;;; ============================================
 ;;; Common Mathematical Operations
@@ -54,19 +65,25 @@
 ;;; Higher-Order Derivatives
 ;;; ============================================
 
-;;; Compute nth derivative
+;;; NOTE: These don't work in Phase 1 because results are strings
+;;; Phase 2 will add proper symbolic object types that can be chained
+
+;;; Compute nth derivative (PHASE 2)
 (define (sym-diff-n expr var n)
-  (if (<= n 0)
-      expr
-      (sym-diff-n (sym-diff expr var) var (- n 1))))
+  (display "sym-diff-n requires Phase 2 (symbolic objects)")
+  (newline)
+  (display "For now, call sym-diff manually n times")
+  (newline))
 
-;;; Second derivative
+;;; Second derivative (PHASE 2)
 (define (sym-diff-2 expr var)
-  (sym-diff-n expr var 2))
+  (display "sym-diff-2 requires Phase 2")
+  (newline))
 
-;;; Third derivative
+;;; Third derivative (PHASE 2)
 (define (sym-diff-3 expr var)
-  (sym-diff-n expr var 3))
+  (display "sym-diff-3 requires Phase 2")
+  (newline))
 
 ;;; ============================================
 ;;; Expression Analysis
@@ -75,7 +92,7 @@
 ;;; Check if expression contains a variable
 (define (sym-has-var? expr var)
   ; Try differentiating; if result is "0", variable not present
-  (not (equal? (sym-diff expr var) "0")))
+  (not (string=? (sym-diff expr var) "0")))
 
 ;;; ============================================
 ;;; Common Expression Patterns
@@ -138,26 +155,35 @@
   (display "f(")
   (display var)
   (display ") = ")
-  (sym-display expr)
+  (if (pair? expr)
+      (display (sym expr))
+      (display expr))
+  (newline)
   (display "f'(")
   (display var)
   (display ") = ")
-  (sym-display (sym-diff expr var)))
+  (display (sym-diff expr var))
+  (newline))
 
-;;; Display first n derivatives
+;;; Display first n derivatives  
+;;; Note: In Phase 1, we can't chain symbolic operations
+;;; because results are strings, not symbolic expressions
+;;; This will be improved in Phase 2
 (define (show-derivatives expr var n)
-  (let loop ((i 0) (current expr))
-    (when (<= i n)
-      (display "f")
-      (when (> i 0)
-        (display "(")
-        (display i)
-        (display ")"))
-      (display "(")
-      (display var)
-      (display ") = ")
-      (sym-display current)
-      (loop (+ i 1) (sym-diff current var)))))
+  (display "Note: show-derivatives requires Phase 2 (symbolic object types)")
+  (newline)
+  (display "For now, use sym-diff repeatedly:")
+  (newline)
+  (display "  (define f '")
+  (display expr)
+  (display ")")
+  (newline)
+  (display "  (define df (sym-diff f '")
+  (display var)
+  (display "))")
+  (newline)
+  (display "  (display df)")
+  (newline))
 
 ;;; ============================================
 ;;; Common Mathematical Expressions
@@ -215,9 +241,9 @@
   (sym-show "  " (sym-diff '(sin (* x x)) 'x))
   (newline)
   
-  (display "Second derivative: d²/dx²[x⁴]")
+  (display "Quotient rule: d/dx[sin(x)/x]")
   (newline)
-  (sym-show "  " (sym-diff-2 '(* x (* x (* x x))) 'x))
+  (sym-show "  " (sym-diff '(/ (sin x) x) 'x))
   (newline))
 
 (define (example-trig)
