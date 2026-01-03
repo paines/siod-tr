@@ -600,36 +600,37 @@ static LISP llog_baroque(LISP x) {
 /* Polymorphic sin */
 static LISP lsin_baroque(LISP x) {
     if (QUATERNIONP(x)) {
-        /* sin(q) = (exp(i*q) - exp(-i*q)) / (2i)
-         * where i = (0,1,0,0) is the quaternion i unit */
+        /* Slice-regular formula: sin(q) = sin(a)·cosh(|v|) + u·cos(a)·sinh(|v|)
+         * where q = a + v, a = scalar part, v = vector part, u = v/|v| */
         
-        LISP i_unit = make_quaternion(0, 1, 0, 0);
+        double a = QUATW(x);  /* Scalar part */
+        double vx = QUATX(x);
+        double vy = QUATY(x);
+        double vz = QUATZ(x);
         
-        /* Compute i*q */
-        LISP iq = quat_multiply(i_unit, x);
+        /* Compute |v| */
+        double v_norm = sqrt(vx*vx + vy*vy + vz*vz);
         
-        /* Compute -q */
-        LISP neg_q = make_quaternion(-QUATW(x), -QUATX(x), -QUATY(x), -QUATZ(x));
+        if (v_norm < 1e-15) {
+            /* Pure real quaternion: sin(a + 0) = sin(a) */
+            return flocons(sin(a));
+        }
         
-        /* Compute i*(-q) = -i*q */
-        LISP neg_iq = quat_multiply(i_unit, neg_q);
+        /* Unit vector u = v/|v| */
+        double ux = vx / v_norm;
+        double uy = vy / v_norm;
+        double uz = vz / v_norm;
         
-        /* exp(i*q) */
-        CQRQuaternion exp_iq;
-        CQRExp(&exp_iq, QUATPTR(iq));
-        LISP exp_iq_lisp = make_quaternion(exp_iq.w, exp_iq.x, exp_iq.y, exp_iq.z);
+        /* sin(q) = sin(a)·cosh(|v|) + u·cos(a)·sinh(|v|) */
+        double sin_a = sin(a);
+        double cos_a = cos(a);
+        double cosh_v = cosh(v_norm);
+        double sinh_v = sinh(v_norm);
         
-        /* exp(-i*q) */
-        CQRQuaternion exp_neg_iq;
-        CQRExp(&exp_neg_iq, QUATPTR(neg_iq));
-        LISP exp_neg_iq_lisp = make_quaternion(exp_neg_iq.w, exp_neg_iq.x, exp_neg_iq.y, exp_neg_iq.z);
+        double w = sin_a * cosh_v;
+        double scale = cos_a * sinh_v;
         
-        /* exp(i*q) - exp(-i*q) */
-        LISP diff = quat_subtract(exp_iq_lisp, exp_neg_iq_lisp);
-        
-        /* Divide by 2i */
-        LISP two_i = make_quaternion(0, 2, 0, 0);
-        return quat_divide(diff, two_i);
+        return make_quaternion(w, ux * scale, uy * scale, uz * scale);
     }
     
     double complex z = to_complex(x);
@@ -640,35 +641,37 @@ static LISP lsin_baroque(LISP x) {
 /* Polymorphic cos */
 static LISP lcos_baroque(LISP x) {
     if (QUATERNIONP(x)) {
-        /* cos(q) = (exp(i*q) + exp(-i*q)) / 2
-         * where i = (0,1,0,0) is the quaternion i unit */
+        /* Slice-regular formula: cos(q) = cos(a)·cosh(|v|) - u·sin(a)·sinh(|v|)
+         * where q = a + v, a = scalar part, v = vector part, u = v/|v| */
         
-        LISP i_unit = make_quaternion(0, 1, 0, 0);
+        double a = QUATW(x);  /* Scalar part */
+        double vx = QUATX(x);
+        double vy = QUATY(x);
+        double vz = QUATZ(x);
         
-        /* Compute i*q */
-        LISP iq = quat_multiply(i_unit, x);
+        /* Compute |v| */
+        double v_norm = sqrt(vx*vx + vy*vy + vz*vz);
         
-        /* Compute -q */
-        LISP neg_q = make_quaternion(-QUATW(x), -QUATX(x), -QUATY(x), -QUATZ(x));
+        if (v_norm < 1e-15) {
+            /* Pure real quaternion: cos(a + 0) = cos(a) */
+            return flocons(cos(a));
+        }
         
-        /* Compute i*(-q) = -i*q */
-        LISP neg_iq = quat_multiply(i_unit, neg_q);
+        /* Unit vector u = v/|v| */
+        double ux = vx / v_norm;
+        double uy = vy / v_norm;
+        double uz = vz / v_norm;
         
-        /* exp(i*q) */
-        CQRQuaternion exp_iq;
-        CQRExp(&exp_iq, QUATPTR(iq));
-        LISP exp_iq_lisp = make_quaternion(exp_iq.w, exp_iq.x, exp_iq.y, exp_iq.z);
+        /* cos(q) = cos(a)·cosh(|v|) - u·sin(a)·sinh(|v|) */
+        double sin_a = sin(a);
+        double cos_a = cos(a);
+        double cosh_v = cosh(v_norm);
+        double sinh_v = sinh(v_norm);
         
-        /* exp(-i*q) */
-        CQRQuaternion exp_neg_iq;
-        CQRExp(&exp_neg_iq, QUATPTR(neg_iq));
-        LISP exp_neg_iq_lisp = make_quaternion(exp_neg_iq.w, exp_neg_iq.x, exp_neg_iq.y, exp_neg_iq.z);
+        double w = cos_a * cosh_v;
+        double scale = -sin_a * sinh_v;
         
-        /* exp(i*q) + exp(-i*q) */
-        LISP sum = quat_add(exp_iq_lisp, exp_neg_iq_lisp);
-        
-        /* Divide by 2 */
-        return quat_scale(sum, 0.5);
+        return make_quaternion(w, ux * scale, uy * scale, uz * scale);
     }
     
     double complex z = to_complex(x);
@@ -727,10 +730,26 @@ static LISP labs_baroque(LISP x) {
 /* Inverse trig functions */
 static LISP lasin_baroque(LISP x) {
     if (QUATERNIONP(x)) {
-        /* asin(q) = -i * log(i*q + sqrt(1 - q²))
-         * where i = (0,1,0,0) */
+        /* asin(q) = -u * log(u*q + sqrt(1 - q²))
+         * where u is the quaternion's own imaginary unit direction */
         
-        LISP i_unit = make_quaternion(0, 1, 0, 0);
+        double w = QUATW(x);
+        double vx = QUATX(x);
+        double vy = QUATY(x);
+        double vz = QUATZ(x);
+        
+        /* Get the imaginary unit direction */
+        double v_norm = sqrt(vx*vx + vy*vy + vz*vz);
+        
+        LISP u;
+        if (v_norm < 1e-15) {
+            /* Pure real - use i as default */
+            u = make_quaternion(0, 1, 0, 0);
+        } else {
+            /* Use quaternion's own direction */
+            u = make_quaternion(0, vx/v_norm, vy/v_norm, vz/v_norm);
+        }
+        
         LISP one = make_quaternion(1, 0, 0, 0);
         
         /* q² */
@@ -742,20 +761,20 @@ static LISP lasin_baroque(LISP x) {
         /* sqrt(1 - q²) */
         LISP sqrt_part = lsqrt_baroque(one_minus_q2);
         
-        /* i*q */
-        LISP iq = quat_multiply(i_unit, x);
+        /* u*q */
+        LISP uq = quat_multiply(u, x);
         
-        /* i*q + sqrt(1 - q²) */
-        LISP sum = QUATERNIONP(sqrt_part) ? quat_add(iq, sqrt_part) : quat_add(iq, to_quaternion(sqrt_part));
+        /* u*q + sqrt(1 - q²) */
+        LISP sum = QUATERNIONP(sqrt_part) ? quat_add(uq, sqrt_part) : quat_add(uq, to_quaternion(sqrt_part));
         
         /* log(...) */
         LISP log_result = llog_baroque(sum);
         
-        /* -i */
-        LISP neg_i = make_quaternion(0, -1, 0, 0);
+        /* -u */
+        LISP neg_u = make_quaternion(0, -QUATX(u), -QUATY(u), -QUATZ(u));
         
-        /* -i * log(...) */
-        LISP result = QUATERNIONP(log_result) ? quat_multiply(neg_i, log_result) : quat_multiply(neg_i, to_quaternion(log_result));
+        /* -u * log(...) */
+        LISP result = QUATERNIONP(log_result) ? quat_multiply(neg_u, log_result) : quat_multiply(neg_u, to_quaternion(log_result));
         
         return result;
     }
@@ -766,8 +785,25 @@ static LISP lasin_baroque(LISP x) {
 
 static LISP lacos_baroque(LISP x) {
     if (QUATERNIONP(x)) {
-        /* acos(q) = -i * log(q + sqrt(q² - 1))
-         * where i = (0,1,0,0) */
+        /* acos(q) = -u * log(q + sqrt(q² - 1))
+         * where u is the quaternion's own imaginary unit direction */
+        
+        double w = QUATW(x);
+        double vx = QUATX(x);
+        double vy = QUATY(x);
+        double vz = QUATZ(x);
+        
+        /* Get the imaginary unit direction */
+        double v_norm = sqrt(vx*vx + vy*vy + vz*vz);
+        
+        LISP u;
+        if (v_norm < 1e-15) {
+            /* Pure real - use i as default */
+            u = make_quaternion(0, 1, 0, 0);
+        } else {
+            /* Use quaternion's own direction */
+            u = make_quaternion(0, vx/v_norm, vy/v_norm, vz/v_norm);
+        }
         
         LISP one = make_quaternion(1, 0, 0, 0);
         
@@ -786,11 +822,11 @@ static LISP lacos_baroque(LISP x) {
         /* log(...) */
         LISP log_result = llog_baroque(sum);
         
-        /* -i */
-        LISP neg_i = make_quaternion(0, -1, 0, 0);
+        /* -u */
+        LISP neg_u = make_quaternion(0, -QUATX(u), -QUATY(u), -QUATZ(u));
         
-        /* -i * log(...) */
-        LISP result = QUATERNIONP(log_result) ? quat_multiply(neg_i, log_result) : quat_multiply(neg_i, to_quaternion(log_result));
+        /* -u * log(...) */
+        LISP result = QUATERNIONP(log_result) ? quat_multiply(neg_u, log_result) : quat_multiply(neg_u, to_quaternion(log_result));
         
         return result;
     }
@@ -801,28 +837,43 @@ static LISP lacos_baroque(LISP x) {
 
 static LISP latan_baroque(LISP x) {
     if (QUATERNIONP(x)) {
-        /* atan(q) = (i/2) * log((i+q)/(i-q))
-         * where i = (0,1,0,0) */
+        /* atan(q) = (u/2) * log((u+q)/(u-q))
+         * where u is the quaternion's own imaginary unit direction */
         
-        LISP i_unit = make_quaternion(0, 1, 0, 0);
+        double w = QUATW(x);
+        double vx = QUATX(x);
+        double vy = QUATY(x);
+        double vz = QUATZ(x);
         
-        /* i + q */
-        LISP i_plus_q = quat_add(i_unit, x);
+        /* Get the imaginary unit direction */
+        double v_norm = sqrt(vx*vx + vy*vy + vz*vz);
         
-        /* i - q */
-        LISP i_minus_q = quat_subtract(i_unit, x);
+        LISP u;
+        if (v_norm < 1e-15) {
+            /* Pure real - use i as default */
+            u = make_quaternion(0, 1, 0, 0);
+        } else {
+            /* Use quaternion's own direction */
+            u = make_quaternion(0, vx/v_norm, vy/v_norm, vz/v_norm);
+        }
         
-        /* (i+q)/(i-q) */
-        LISP ratio = quat_divide(i_plus_q, i_minus_q);
+        /* u + q */
+        LISP u_plus_q = quat_add(u, x);
+        
+        /* u - q */
+        LISP u_minus_q = quat_subtract(u, x);
+        
+        /* (u+q)/(u-q) */
+        LISP ratio = quat_divide(u_plus_q, u_minus_q);
         
         /* log(...) */
         LISP log_result = llog_baroque(ratio);
         
-        /* i/2 = (0, 0.5, 0, 0) */
-        LISP i_over_2 = make_quaternion(0, 0.5, 0, 0);
+        /* u/2 */
+        LISP u_over_2 = make_quaternion(0, QUATX(u)*0.5, QUATY(u)*0.5, QUATZ(u)*0.5);
         
-        /* (i/2) * log(...) */
-        LISP result = QUATERNIONP(log_result) ? quat_multiply(i_over_2, log_result) : quat_multiply(i_over_2, to_quaternion(log_result));
+        /* (u/2) * log(...) */
+        LISP result = QUATERNIONP(log_result) ? quat_multiply(u_over_2, log_result) : quat_multiply(u_over_2, to_quaternion(log_result));
         
         return result;
     }
@@ -834,26 +885,37 @@ static LISP latan_baroque(LISP x) {
 /* Hyperbolic trig functions */
 static LISP lsinh_baroque(LISP x) {
     if (QUATERNIONP(x)) {
-        /* sinh(q) = (exp(q) - exp(-q)) / 2 */
+        /* Slice-regular formula: sinh(q) = sinh(a)·cos(|v|) + u·cosh(a)·sin(|v|)
+         * where q = a + v, a = scalar part, v = vector part, u = v/|v| */
         
-        /* exp(q) */
-        CQRQuaternion exp_q;
-        CQRExp(&exp_q, QUATPTR(x));
-        LISP exp_q_lisp = make_quaternion(exp_q.w, exp_q.x, exp_q.y, exp_q.z);
+        double a = QUATW(x);  /* Scalar part */
+        double vx = QUATX(x);
+        double vy = QUATY(x);
+        double vz = QUATZ(x);
         
-        /* -q */
-        LISP neg_q = make_quaternion(-QUATW(x), -QUATX(x), -QUATY(x), -QUATZ(x));
+        /* Compute |v| */
+        double v_norm = sqrt(vx*vx + vy*vy + vz*vz);
         
-        /* exp(-q) */
-        CQRQuaternion exp_neg_q;
-        CQRExp(&exp_neg_q, QUATPTR(neg_q));
-        LISP exp_neg_q_lisp = make_quaternion(exp_neg_q.w, exp_neg_q.x, exp_neg_q.y, exp_neg_q.z);
+        if (v_norm < 1e-15) {
+            /* Pure real quaternion: sinh(a + 0) = sinh(a) */
+            return flocons(sinh(a));
+        }
         
-        /* exp(q) - exp(-q) */
-        LISP diff = quat_subtract(exp_q_lisp, exp_neg_q_lisp);
+        /* Unit vector u = v/|v| */
+        double ux = vx / v_norm;
+        double uy = vy / v_norm;
+        double uz = vz / v_norm;
         
-        /* Divide by 2 */
-        return quat_scale(diff, 0.5);
+        /* sinh(q) = sinh(a)·cos(|v|) + u·cosh(a)·sin(|v|) */
+        double sinh_a = sinh(a);
+        double cosh_a = cosh(a);
+        double cos_v = cos(v_norm);
+        double sin_v = sin(v_norm);
+        
+        double w = sinh_a * cos_v;
+        double scale = cosh_a * sin_v;
+        
+        return make_quaternion(w, ux * scale, uy * scale, uz * scale);
     }
     double complex z = to_complex(x);
     double complex result = csinh(z);
@@ -862,26 +924,37 @@ static LISP lsinh_baroque(LISP x) {
 
 static LISP lcosh_baroque(LISP x) {
     if (QUATERNIONP(x)) {
-        /* cosh(q) = (exp(q) + exp(-q)) / 2 */
+        /* Slice-regular formula: cosh(q) = cosh(a)·cos(|v|) + u·sinh(a)·sin(|v|)
+         * where q = a + v, a = scalar part, v = vector part, u = v/|v| */
         
-        /* exp(q) */
-        CQRQuaternion exp_q;
-        CQRExp(&exp_q, QUATPTR(x));
-        LISP exp_q_lisp = make_quaternion(exp_q.w, exp_q.x, exp_q.y, exp_q.z);
+        double a = QUATW(x);  /* Scalar part */
+        double vx = QUATX(x);
+        double vy = QUATY(x);
+        double vz = QUATZ(x);
         
-        /* -q */
-        LISP neg_q = make_quaternion(-QUATW(x), -QUATX(x), -QUATY(x), -QUATZ(x));
+        /* Compute |v| */
+        double v_norm = sqrt(vx*vx + vy*vy + vz*vz);
         
-        /* exp(-q) */
-        CQRQuaternion exp_neg_q;
-        CQRExp(&exp_neg_q, QUATPTR(neg_q));
-        LISP exp_neg_q_lisp = make_quaternion(exp_neg_q.w, exp_neg_q.x, exp_neg_q.y, exp_neg_q.z);
+        if (v_norm < 1e-15) {
+            /* Pure real quaternion: cosh(a + 0) = cosh(a) */
+            return flocons(cosh(a));
+        }
         
-        /* exp(q) + exp(-q) */
-        LISP sum = quat_add(exp_q_lisp, exp_neg_q_lisp);
+        /* Unit vector u = v/|v| */
+        double ux = vx / v_norm;
+        double uy = vy / v_norm;
+        double uz = vz / v_norm;
         
-        /* Divide by 2 */
-        return quat_scale(sum, 0.5);
+        /* cosh(q) = cosh(a)·cos(|v|) + u·sinh(a)·sin(|v|) */
+        double sinh_a = sinh(a);
+        double cosh_a = cosh(a);
+        double cos_v = cos(v_norm);
+        double sin_v = sin(v_norm);
+        
+        double w = cosh_a * cos_v;
+        double scale = sinh_a * sin_v;
+        
+        return make_quaternion(w, ux * scale, uy * scale, uz * scale);
     }
     double complex z = to_complex(x);
     double complex result = ccosh(z);
@@ -913,7 +986,8 @@ static LISP ltanh_baroque(LISP x) {
 
 static LISP lasinh_baroque(LISP x) {
     if (QUATERNIONP(x)) {
-        /* asinh(q) = log(q + sqrt(q² + 1)) */
+        /* asinh(q) = log(q + sqrt(q² + 1))
+         * This one doesn't need direction adjustment - it's already correct */
         
         LISP one = make_quaternion(1, 0, 0, 0);
         
