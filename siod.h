@@ -183,11 +183,7 @@ typedef LISP (*SUBR_FUNC)(void);
 /* Complex number macros */
 #define COMPLEXP(x) TYPEP(x,tc_complex)
 #define NCOMPLEXP(x) NTYPEP(x,tc_complex)
-/*
-#define COMPLEXREAL(x) (((complex_cell *)(x))->real)
-#define COMPLEXIMAG(x) (((complex_cell *)(x))->imag)
-*/
-
+/* Quaterniob number macros */
 #define QUATERNIONP(_obj) TYPEP(_obj,tc_quaternion)
 #define NQUATERNIONP(_obj) NTYPEP(_obj,tc_quaternion)
 
