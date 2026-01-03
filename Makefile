@@ -278,12 +278,12 @@ LIBFILES = http-server.scm http-stress.scm http.scm \
            cgi-echo.scm find-files.scm \
            hello.scm parser_pratt.scm pop3.scm selfdoc.scm \
 	   sample.c siod.html piechart.scm cgi.scm ftp.scm \
-           sql_sqlite3-utilities.scm gd-utilities.scm \
-	   pthreads-utilities.scm help.scm qol.scm \
-	   plplot-utilities.scm compat.scm
+           sql_sqlite3-utils.scm gd-utils.scm \
+	   pthreads-utils.scm help.scm qol.scm \
+	   plplot-utils.scm compat.scm symengine-utils.scm
 
 SOLIBFILES=gd tar ss regex acct  parser_pratt \
-           statfs sql_sqlite3 raylib plplot
+           statfs sql_sqlite3 raylib plplot symengine
 
 
 PUBINCS = siod.h
