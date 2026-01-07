@@ -738,7 +738,7 @@ static LISP lasin_baroque(LISP x) {
         /* asin(q) = -u * log(u*q + sqrt(1 - q²))
          * where u is the quaternion's own imaginary unit direction */
         
-        double w = QUATW(x);
+        //double w = QUATW(x);
         double vx = QUATX(x);
         double vy = QUATY(x);
         double vz = QUATZ(x);
@@ -793,7 +793,7 @@ static LISP lacos_baroque(LISP x) {
         /* acos(q) = -u * log(q + sqrt(q² - 1))
          * where u is the quaternion's own imaginary unit direction */
         
-        double w = QUATW(x);
+        //double w = QUATW(x);
         double vx = QUATX(x);
         double vy = QUATY(x);
         double vz = QUATZ(x);
@@ -845,7 +845,7 @@ static LISP latan_baroque(LISP x) {
         /* atan(q) = (u/2) * log((u+q)/(u-q))
          * where u is the quaternion's own imaginary unit direction */
         
-        double w = QUATW(x);
+        //double w = QUATW(x);
         double vx = QUATX(x);
         double vy = QUATY(x);
         double vz = QUATZ(x);

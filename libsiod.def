@@ -56,6 +56,9 @@ EXPORTS
     init_subr_3
     init_subr_4
     init_subr_5
+    init_subr_6
+    init_subr_7
+    init_subr_8
     init_lsubr
     init_fsubr
     init_msubr

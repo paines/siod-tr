@@ -300,16 +300,14 @@ LISP siod_plot_line(LISP x_list, LISP y_list) {
         free(x);
         free(y);
         err("failed to convert arrays", NIL);
-    }
-    
-    if (nx != ny) {
+    } else if (nx != ny) {
         free(x);
         free(y);
         err("x and y must have same length", NIL);
     }
-    
+
     plline(nx, x, y);
-    
+
     free(x);
     free(y);
     return NIL;

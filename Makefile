@@ -173,8 +173,8 @@ sample: $(SAMPLE_OBJS)
 .o.dylib:
 	$(LD) -o $@ $(LD_LIB_FLAGS) $< libsiod.dylib $(LD_LIB_LIBS)
 
-.o.so:
-	$(LD) -o $@ $(LD_LIB_FLAGS) $< libsiod.so $(LD_LIB_LIBS)
+#.o.so:
+#	$(LD) -o $@ $(LD_LIB_FLAGS) $< libsiod.so $(LD_LIB_LIBS)
 
 
 # Now the build rules for the extensions

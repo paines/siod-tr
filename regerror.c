@@ -134,7 +134,7 @@ size_t errbuf_size;
 
 		if (ierrcode&REG_ITOA) {
 			if (r->code != 0)
-				(void) strcpy(convbuf, r->name);
+				(void) strncpy(convbuf, r->name, sizeof(convbuf)-1);
 			else
 				sprintf(convbuf, "REG_0x%x", target);
 			assert(strlen(convbuf) < sizeof(convbuf));
