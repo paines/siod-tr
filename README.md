@@ -22,6 +22,16 @@ The goal is a proper mathematical computing environment where you can:
 
 
 ## What's Been Done
+** Octonion support**:
+	- phase 1 done. octonions are now integrated as first class citizens
+      into the siod core.
+	- octonions do not participate in the polymorphic maths functions
+      as they are not associative under multiplication 
+	  and division is _strange_
+	- requires the standalone LibOct library: (https://github.com/deconstructo/LibOctonion)
+	- as i get my head around the octonions better, LibOctonion and siod-tr
+	  support will be extended
+
 **Quaternion support**:
 	- quaternions are now integrated as first class citizens into
 	  the siod core.
@@ -77,7 +87,6 @@ The goal is a proper mathematical computing environment where you can:
 
 	- updating of all of the documentation for the sysem
 	- replacing the siod.html with a markdown version
-	- quarternions _useful_, octonions _not useful, but fun_
 
 ## Building
 
