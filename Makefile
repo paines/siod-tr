@@ -274,11 +274,11 @@ MANPAGES = siod snapshot-dir snapshot-compare http-get \
 LIBFILES = http-server.scm http-stress.scm http.scm \
            maze-support.scm pratt.scm siod.scm smtp.scm  \
            cgi-echo.scm find-files.scm \
-           hello.scm parser_pratt.scm pop3.scm selfdoc.scm \
+           parser_pratt.scm pop3.scm selfdoc.scm \
 	   sample.c siod.html piechart.scm cgi.scm ftp.scm \
            sql_sqlite3-utils.scm gd-utils.scm \
 	   pthreads-utils.scm help.scm qol.scm \
-	   plplot-utils.scm compat.scm symengine-utils.scm
+	   plplot-utils.scm compat.scm 
 
 SOLIBFILES=gd tar ss regex acct  parser_pratt \
            statfs sql_sqlite3 raylib plplot symengine
