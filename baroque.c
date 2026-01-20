@@ -177,6 +177,13 @@ static LISP lmagnitude(LISP z) {
     }
 }
 
+static LISP lquat_norm(LISP q) {
+    if (!QUATERNIONP(q)) err("not a quaternion", q);
+    double norm_val;
+    CQRNorm(&norm_val, QUATPTR(q));
+    return flocons(norm_val);
+}
+
 /* (angle z) - Phase angle / argument */
 static LISP langle(LISP z) {
     if (COMPLEXP(z)) {
@@ -1426,7 +1433,8 @@ void init_baroque(void) {
     
     init_subr_1("quaternion?", lquaternionp);
     init_subr_1("number?", lnumberp_baroque);  /* Polymorphic: float, complex, or quaternion */
-    
+
+	init_subr_1("quat-norm", lquat_norm);    
     init_subr_1("quat-normalize", lquat_normalize);
     init_subr_1("quat-inverse", lquat_inverse);
     init_subr_1("quat-to-axis-angle", lquat_to_axis_angle);
@@ -1487,4 +1495,5 @@ void init_baroque(void) {
     init_subr_1("conj", lconj_baroque);
     init_subr_1("proj", lproj_baroque);
     init_subr_1("abs", labs_baroque);
+  
 }
