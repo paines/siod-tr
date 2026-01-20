@@ -67,6 +67,7 @@ gjc@world.std.com
 
 
    Release TR-3.7.0 2025-12-30: include json & readline support
+   Release TR-3.7.1 2026-01-20: changes to support octonions + quaternions
 
   */
 
@@ -94,11 +95,11 @@ gjc@world.std.com
 
 static void init_slib_version(void)
 {setvar(cintern("*slib-version*"),
-	cintern("$Id: slib.c,v 1.16 1997/12/05 14:44:44 gjc Exp $"),
+	cintern("$Id: slib.c,v 2.0 2026-01-20 yv Exp $"),
 	NIL);}
 
 char * __stdcall siod_version(void)
-{return("TR-3.7.0 2025-12-30");}
+{return("TR-3.7.1 2026-01-20");}
 
 long nheaps = 2;
 LISP *heaps;
